@@ -14,8 +14,17 @@
                 <center>
                   <img src="http://www.gravatar.com/avatar/<%= @hash_email %>s=200" />
                   <p></p>
-                  <a href = "#" class = "btn btn-default">Follow</a>
-                  <a href = "/follow/<%= @user.user_name%>" class = "btn btn-default">Followers</a>
+
+                  <form class="form-horizontal" action="/start_following/<%= @user.user_name%>" method="post">
+                   <input type="submit" name="" class="btn btn-primary" value="Follow">
+                   <input type ='hidden' name='user_name' value="<%= @user.user_name %>">
+                  </form>
+
+                  <form class="form-horizontal" action="/follow/<%= @user.user_name%>" method="get">
+                    <input type="submit" name="" class="btn btn-primary" value="Followers">
+                    <input type ='hidden' name='user_name' value="<%= @user.user_name %>">
+                  </form>
+
                 </center>
                 <p></p>
               </div>
@@ -35,7 +44,7 @@
 
                     <center>
                       <a href = "#" class = "btn btn-default">Re-Tweet</a>
-                      <a href = "#" class = "btn btn-default">Delete</a>
+                  <a href = "/remove_tweet/<%= tweet.id %>" class = "btn btn-default" method="delete">Delete</a>
                     </center>
                     <br>
                   </div>

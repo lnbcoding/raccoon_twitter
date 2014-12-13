@@ -8,6 +8,8 @@
   <link rel = "stylesheet" type="text/css" href = "/css/bootstrap.min.css" >
   <link rel = "stylesheet" type="text/css" href = "/css/styles.css" >
   <link rel = "stylesheet" type="text/css" href = "/css/application.css" >
+  <script src="/js/application.js"></script>
+  <script src="/js/jquery.js"></script>
 
 
     <title>Twitter</title>
@@ -15,6 +17,7 @@
   </head>
 
   <body>
+
     <div class = "navbar navbar-inverse navbar-static-top">
       <div class = "container">
 
@@ -25,13 +28,12 @@
             <div class = "col-md-3">
               <p></p>
 
-                <form action='/tweet/<%= @user.user_name %>' method="post">
-                 <input type="text" name="content" style="width:500px; height:50px"><br><br>
-                  <input type="submit" name="submit" class="btn btn-primary">
-                </form>
-
-
+                  <form action='/tweet/<%= @user.user_name %>' method="post">
+                   <input type="text" name="content" style="width:500px; height:50px"><br><br>
+                    <input type="submit" name="submit" class="btn btn-primary">
+                  </form>
             </div>
+
 
           </div>
 
@@ -43,9 +45,15 @@
 
             <div class = "collapse navbar-collapse navHeaderCollapse">
               <ul class = "nav navbar-nav navbar-right">
-                <li><a href = "#">Profile</a></li>
-                <li><a href = "#">Timeline</a></li>
-                <li><a href = "#">Log-out</a></li>
+                <li><a href = "/find_user">Profile</a></li>
+                <li><a href = "/timeline/<%= @user.user_name %>">Timeline</a></li>
+                <li><a href = "/logout">Log-out</a></li>
+                <li>
+                   <form action='/search/' method="post">
+                   <input type="text" name="item" style="width:100px; height:20px">
+                    <input type="submit" name="submit" class="btn btn-primary" value= "Search">
+                  </form>
+                </li>
               </ul>
             </div>
 

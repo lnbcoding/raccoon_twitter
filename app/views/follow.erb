@@ -1,16 +1,16 @@
   <div class = "container">
-    <h4>Those who you follow</h4>
+    <h4> Those who follow you</h4>
     <ul>
     <% @the_followers.each do |user| %>
-      <li><%= user.user_name %></li>
+      <li><a href="/profile/<%= user.user_name %>"><%= user.user_name %></a></li>
       <% end %>
     </ul>
 <br>
 <br>
-<h4>Those who follow you</h4>
+<h4>Those who you follow</h4>
    <ul>
     <% @those_who_follow.each do |user| %>
-    <li><%= user.user_name %></li>
+    <li><a href="/profile/<%= user.user_name %>"><%= user.user_name %></li>
     <% end %>
   </ul>
   </div>

@@ -8,7 +8,6 @@ end
 get '/profile/:user_name' do
   @user = User.find_by(user_name: params[:user_name])
   @hash_email = hash_email(@user.email)
-
     # @tweet_objects = @tweet_objects.sort_by{|tweet_object| tweet_object.created_at}.reverse
 
   erb :profile
@@ -20,6 +19,13 @@ post '/tweet/:user_name' do
   @tweet = Tweet.create(user_id: @user.id, content: params[:content])
   redirect "/profile/#{@user.user_name}"
 end
+
+
+
+
+
+
+
 
 # # for header new tweets in profile & timeline
 # post '/timeline/:user_name' do
@@ -36,9 +42,9 @@ end
 #   erb :tweet
 # end
 
-delete '/profile/:user_name' do
+get '/remove_tweet/:id' do
   Tweet.destroy(params[:id])
-  redirect '/profile/:user_name'
+  redirect "/find_user"
 end
 
 get '/follow/:user_name' do
@@ -55,19 +61,55 @@ get '/follow/:user_name' do
   erb :follow
 end
 
+post '/start_following/:user_name' do
+  @user = User.find_by(user_name: params[:user_name])
+  Following.create(user_id: @user.id, followed_by: session[:user_id])
+  redirect "/profile/#{@user.user_name}"
+end
 
-# foll.each {|i| happy = User.find(i.followed_by)}
+post '/search/' do
+  @tweet_objects = []
+  Tweet.all.each do  |tweet|
+    if tweet.content.include?(params[:item])
+      @tweet_objects << tweet
+    end
+  end
+
+  erb :search
+end
+
+get '/search/:search_item' do
+  erb :search
+end
+
+
+
+get "/find_user" do
+  @user =  User.find(session[:user_id])
+  redirect "/profile/#{@user.user_name}"
+end
 
 
 get '/timeline/:user_name' do
   @user = User.find_by(user_name: params[:user_name])
-  @followers = Following.where(user_id: @user.id)
-  @user_ids = @followers.followed_by
+  @tweet_objects = []
+  Following.all.each do |follower|
+    if follower.followed_by == @user.id
+      @person = User.find(follower.user_id)
+     @tweet_objects << Tweet.where(user_id: @person.id)
+     p @tweet_objects
+    end
+  end
+
+  # @followers = Following.where(user_id: @user.id)
+  # @follower_ids = []
+  # @followers.all.each {|follower|  @follower_ids << follower.followed_by }
+  # @tweet_objects = []
+
+  # @follower_ids.each {|user_id| @tweet_objects << Tweet.where(user_id: user_id)}
+  # @tweet_objects = @tweet_objects.flatten.sort_by{|tweet_object| tweet_object.created_at}.reverse
   # @tweets = @user_objects.user_id.tweet
 
-  @tweet_objects = []
-  @user_ids.each {|user_id| @tweet_objects << Tweet.where(user_id: user_id)}
-  @tweet_objects = @tweet_objects.sort_by{|tweet_object| tweet_object.created_at}.reverse
   erb :timeline
 end
 
@@ -87,30 +129,37 @@ end
 #   erb :secret
 # end
 
-# post '/signup' do
-#   user = User.new(params)
-#   if user.save
-#     session[:user_id]=user.id
-#   else
-#     flash[:error]=user.errors.full_messages
-#   end
-#   redirect '/timeline/:user_name'
-# end
+post '/signup' do
 
-# post '/login' do
-#   @user = User.find_by_email(params[:email])
-#   if @user && @user.authenticate(params[:password])
-#     session[:user_id] = @user.id
-#     redirect '/secret'
-#   else
-#     flash[:errors] = "Try again"
-#     erb :index
-#   end
+  @user = User.create(params[:data])
 
-# end
+    session[:user_id] = @user.id
 
-# get '/logout' do
-#   session[:user_id]=nil
-#   redirect '/'
-# end
+  redirect "/timeline/#{@user.user_name}"
+end
+
+
+post '/login' do
+
+  # raise params.inspect
+
+  @user = User.find_by(email: params[:data][:email])
+
+    session[:user_id] = @user.id
+
+    redirect "/timeline/#{@user.user_name}"
+
+  # if @user && @user.authenticate(params[:password])
+  #   session[:user_id] = @user.id
+  #   redirect '/timeline/:user_name'
+  # else
+  #   redirect '/'
+  # end
+
+end
+
+get '/logout' do
+  session[:user_id]=nil
+  redirect '/'
+end
 
